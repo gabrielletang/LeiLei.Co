@@ -1,0 +1,43 @@
+const articleHTML = `
+  <div class="a-meta">Statistics · Reproducibility · Multiple Comparisons</div>
+  <h1>P-hacking and the garden of forking paths</h1>
+  <p><strong>Multiple comparisons can lead to spurious conclusions</strong></p>
+
+  <p>This time, we continue our discussion around p-values by discussing a common trap that people fall into when analyzing data.</p>
+
+  <p>Imagine the following: you are interested in the influence of hydrology on the abundance of a particular fish species. Because there are many aspects of the hydrological cycle that might play a role in regulating this species, you perform multiple tests to see if there is a statistically significant relationship between fish abundance and hydrological flow metrics such as summer flow magnitude, timing of flooding, duration of low flows, and more. And lo and behold, you find that summer flow magnitude is positively correlated with fish abundance, with a <em>p</em>-value less than 0.05! Great, time to write up the paper describing how summer flows are important in regulating the abundance of this species, right?</p>
+
+  <p>Well… hold on a minute. Unfortunately, this would be a textbook example of p-hacking – sorting through numerous statistical tests to determine which aspects of a particular hypothesis (e.g. that hydrology influences fish abundance) are significant, and reporting on only the significant findings. The issue when looking at multiple comparisons like this is that the more tests you perform, the more likely you are to see a "weird" response.</p>
+
+  <p>Let us consider a hypothetical scenario where we know the null hypothesis, e.g. there is no effect of a particular flow metric on fish abundance, to be true. Setting our significance level to <em>α</em> = 0.05, how often do we falsely reject the null hypothesis and incorrectly conclude that there really is an effect when making different numbers of comparisons?</p>
+
+  <figure>
+    <img src="https://mathecology.wordpress.com/wp-content/uploads/2017/08/multiplecomparisonsrisk.png?w=625" alt="MultipleComparisonsRisk">
+    <figcaption><strong>Probability of falsely rejecting the null hypothesis (red) when it is true.</strong></figcaption>
+  </figure>
+
+  <p>Unfortunately, as we do more and more comparisons, we are more and more likely to get a significant <em>p</em>-value simply by chance alone. For a single statistical test using a significance threshold of 0.05, there is a 5% chance to reject the null hypothesis even when it is true (known as a Type I error). With five comparisons using the same significance level, there is only a 0.95<sup>5</sup> = 77.4% chance of correctly concluding that there is no relationship — or almost a 25% chance of finding a significant relationship even though none exists. The chance of finding at least one statistically significant result simply by chance climbs to 40.1% with ten tests. This is a hazard because, as you might recall from the last installment, it is impossible to differentiate between a truly significant relationship versus simply a weird occurrence. By the time you've conducted over 20 tests, including exploratory graphs used as unofficial tests, on data where there is no true relationship, you've got over a 60% chance of at least one "weird" result that leads you to wrongly conclude that there is a relationship.</p>
+
+  <p>For a more hands-on experience, try p-hacking in <a href="https://projects.fivethirtyeight.com/p-hacking" target="_blank" rel="noopener">this interactive from FiveThirtyEight</a>, which puts you in the statistician's seat of a study on the health of the United States economy under the two major political parties. After playing around with their interactive visualization, you will find that you can "obtain evidence" for literally any hypothesis you want about how the United States economy is affected by whether Democrats or Republicans are in office. It just takes some tweaking of predictors and responses.</p>
+
+  <h2>The garden of forking paths</h2>
+  <p>Now, you might be thinking, "Jeez, with all these challenges around multiple tests, why not just focus on the hypotheses and statistical tests that are most likely to be interesting?" The problem comes when you realize that there are a multitude of ways to approach a hypothesis, and there are numerous informal decisions we make when looking at our data about which tests or data we use. For example, which covariates to focus on, how data is transformed, how many categorical bins to divide data into, and so on. These endless choices lead to what statistician Andrew Gelman calls the "<a href="http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf" target="_blank" rel="noopener">garden of forking paths</a>", where researchers may explore their data extensively, but only report a subset of the statistical methods they ended up utilizing (e.g. the models that fit the data better).</p>
+
+  <h2>Avoiding this pitfall</h2>
+  <p>There are several possibilities for mitigating the hazard of falsely rejecting null hypotheses when making multiple comparisons. First, each time you conduct multiple statistical tests related to a single overarching hypothesis, you can adjust your significance level from <em>α</em> = 0.05 to <em>α*</em> = 0.05/<em>n</em>, where <em>n</em> is the number of tests you are performing. This is known as a Bonferroni correction, and it brings the probability of a false rejection over the whole suite of tests in line with the rate you would see if you were only conducting one test.</p>
+
+  <h2>Distinguish between hypothesis testing and exploratory data analysis</h2>
+  <p>We often learn that exploratory data analysis should be precursor to statistical analysis. Indeed, checking for erroneous observations and distributional assumptions needs to come before statistical testing. Other forms of exploratory analysis, however, can be conducted after formal hypothesis testing. In the above example, what if the researcher had identified, from previous research, the two strongest hypotheses about how hydrology might impact fish abundance and only formally conducted those two tests. The scientist would then be free to continue graphing and exploring the data to identify other facets of the hydrological cycle that appear to have a relationship with fish abundance as ideas for future research or to spark new mental models of how the ecological system might be structured. These ideas and models could then be tested with new, independent data.</p>
+
+  <h2>Establish hypotheses and statistical methodology early</h2>
+  <p>This leads to the crucial importance of establishing hypotheses and methods, including statistical models from the outset, ideally before data collection even begins. You can formally <a href="https://cos.io/prereg/" target="_blank" rel="noopener">"preregister" your hypotheses</a> or you can at least be mindful of not altering your methodology based on data exploration. This practice will dissuade you from unintentional p-hacking and from digging too hard for expected results. Consequently, you will fortify your statistical assertions and lend more credence to your science when you follow up with the full results of your analyses.</p>
+
+  <p>Hopefully, this has been helpful for being cognizant of p-hacking and will prevent you from being an unintentional p-hacker. The <a href="https://fivethirtyeight.com/features/science-isnt-broken/" target="_blank" rel="noopener">article</a> that accompanies the FiveThirtyEight interactive above is also a great read for how p-hacking is not the end of credible science.</p>
+
+  <h2>Sources</h2>
+  <ol>
+    <li>Aschwanden, C. (2015) "Science Isn't Broken." <a href="https://fivethirtyeight.com/features/science-isnt-broken/" target="_blank" rel="noopener">https://fivethirtyeight.com/features/science-isnt-broken/</a></li>
+    <li>Center for Open Science (2017) "Preregistration Challenge" <a href="https://cos.io/prereg/" target="_blank" rel="noopener">https://cos.io/prereg/</a></li>
+    <li>Gelman, A. and Loken, E. (2013) "The garden of forking paths: Why multiple comparisons can be a problem, even when there is no 'fishing expedition' or 'p-hacking' and the research hypothesis was posited ahead of time." <a href="http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf" target="_blank" rel="noopener">http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf</a></li>
+  </ol>
+__BACKTICK__;
